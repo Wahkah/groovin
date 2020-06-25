@@ -16,11 +16,11 @@ export class JaiminisBox extends Source {
   }
 
   get version(): string {
-    return "1.0.1";
+    return "1.0.2";
   }
 
   get name(): string {
-    return "JaiminisBox";
+    return "Jaiminis Box";
   }
 
   get icon(): string {
