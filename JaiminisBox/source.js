@@ -254,7 +254,7 @@ class JaiminisBox extends Source_1.Source {
         super(cheerio);
     }
     get version() {
-        return "1.0.3";
+        return "1.0.4";
     }
     get name() {
         return "Jaiminis Box";
@@ -376,7 +376,7 @@ class JaiminisBox extends Source_1.Source {
         return chapterDetails;
     }
     searchRequest(query, page) {
-        let searchData = qs.stringify({ search: `${query}` });
+        let searchData = qs.stringify({ search: `${query.title}` });
         return createRequestObject({
             url: `${JB_DOMAIN}/reader/search`,
             method: "POST",
@@ -405,8 +405,7 @@ class JaiminisBox extends Source_1.Source {
             ).toLocaleDateString(); */
             mangas.push(createMangaTile({
                 id: chapterId,
-                // Placeholder, maybe change later
-                image: "https://via.placeholder.com/300x448",
+                image: "",
                 title: createIconText({ text: title !== null && title !== void 0 ? title : "" }),
             }));
         });
