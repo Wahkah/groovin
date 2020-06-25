@@ -16,7 +16,7 @@ export class JaiminisBox extends Source {
   }
 
   get version(): string {
-    return "1.1.2";
+    return "1.0.0";
   }
 
   get name(): string {
