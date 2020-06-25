@@ -149,7 +149,7 @@ export abstract class Source {
    * @param page It is likely that your search will have more than one page. This paramter determines which page
    * of the search results is being requested
    */
-  abstract searchRequest(query: String, page: number): Request | null;
+  abstract searchRequest(query: SearchRequest, page: number): Request | null;
 
   /**
    * A function which should handle parsing apart HTML returned from {@link Source.getChapterDetailsRequest}

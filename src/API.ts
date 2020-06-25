@@ -4,11 +4,10 @@ import "./models/impl_export";
 import cheerio from "cheerio";
 import { Source } from "./sources/Source";
 
-// Sources
-
 import { Manga } from "./models/Manga/Manga";
 import { Chapter } from "./models/Chapter/Chapter";
 import { ChapterDetails } from "./models/ChapterDetails/ChapterDetails";
+import { SearchRequest } from "./models/SearchRequest/SearchRequest";
 import { Request } from "./models/RequestObject/RequestObject";
 import { MangaTile } from "./models/MangaTile/MangaTile";
 
@@ -284,7 +283,7 @@ export class APIWrapper {
    */
   async search(
     source: Source,
-    query: String,
+    query: SearchRequest,
     page: number
   ): Promise<MangaTile[]> {
     let request = source.searchRequest(query, page);

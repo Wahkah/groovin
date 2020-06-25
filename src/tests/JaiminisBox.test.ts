@@ -59,7 +59,9 @@ describe("JaiminisBox Tests", function () {
   });
 
   it("Testing search", async () => {
-    let testSearch = "fire";
+    let testSearch = createSearchRequest({
+      title: "fire",
+    });
 
     let search = await wrapper.search(source, testSearch, 0);
 
@@ -74,7 +76,9 @@ describe("JaiminisBox Tests", function () {
   });
 
   it("Testing invalid search", async () => {
-    let testSearch = "super-not-valid-search";
+    let testSearch = createSearchRequest({
+      title: "very-not-valid-search",
+    });
 
     let search = await wrapper.search(source, testSearch, 1);
     let result = search[0];

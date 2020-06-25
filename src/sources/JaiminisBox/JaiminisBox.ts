@@ -16,7 +16,7 @@ export class JaiminisBox extends Source {
   }
 
   get version(): string {
-    return "1.0.3";
+    return "1.0.4";
   }
 
   get name(): string {
@@ -165,8 +165,8 @@ export class JaiminisBox extends Source {
     return chapterDetails;
   }
 
-  searchRequest(query: string, page: number): Request | null {
-    let searchData = qs.stringify({ search: `${query}` });
+  searchRequest(query: SearchRequest, page: number): Request | null {
+    let searchData = qs.stringify({ search: `${query.title}` });
 
     return createRequestObject({
       url: `${JB_DOMAIN}/reader/search`,
@@ -201,8 +201,7 @@ export class JaiminisBox extends Source {
       mangas.push(
         createMangaTile({
           id: chapterId,
-          // Placeholder, maybe change later
-          image: "https://via.placeholder.com/300x448",
+          image: "",
           title: createIconText({ text: title ?? "" }),
         })
       );
