@@ -254,7 +254,7 @@ class JaiminisBox extends Source_1.Source {
         super(cheerio);
     }
     get version() {
-        return "1.0.2";
+        return "1.0.3";
     }
     get name() {
         return "Jaiminis Box";
@@ -390,7 +390,7 @@ class JaiminisBox extends Source_1.Source {
             return mangas;
         }
         $("div.group").each((index, manga) => {
-            var _a, _b;
+            var _a;
             let chapterIdRaw = (_a = $("div.title a", manga).attr("href")) === null || _a === void 0 ? void 0 : _a.split("/");
             let chapterIdClean = chapterIdRaw === null || chapterIdRaw === void 0 ? void 0 : chapterIdRaw.filter((i) => {
                 return i != "" && i != null;
@@ -400,16 +400,14 @@ class JaiminisBox extends Source_1.Source {
                 chapterId = chapterIdClean.pop().toString();
             }
             let title = $("div.title a", manga).attr("title");
-            let lastUpdate = new Date(Date.parse((_b = $("div.meta_r", manga).html()) !== null && _b !== void 0 ? _b : "")).toLocaleDateString();
-            let author = undefined;
-            let shortDesc = undefined;
+            /* let lastUpdate = new Date(
+              Date.parse($("div.meta_r", manga).html() ?? "")
+            ).toLocaleDateString(); */
             mangas.push(createMangaTile({
                 id: chapterId,
-                image: "",
+                // Placeholder, maybe change later
+                image: "https://via.placeholder.com/300x448",
                 title: createIconText({ text: title !== null && title !== void 0 ? title : "" }),
-                subtitleText: createIconText({ text: author !== null && author !== void 0 ? author : "" }),
-                primaryText: createIconText({ text: shortDesc !== null && shortDesc !== void 0 ? shortDesc : "" }),
-                secondaryText: createIconText({ text: lastUpdate !== null && lastUpdate !== void 0 ? lastUpdate : "" }),
             }));
         });
         return mangas;
