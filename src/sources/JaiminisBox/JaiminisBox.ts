@@ -16,7 +16,7 @@ export class JaiminisBox extends Source {
   }
 
   get version(): string {
-    return "1.0.4";
+    return "1.0.5";
   }
 
   get name(): string {
@@ -201,7 +201,7 @@ export class JaiminisBox extends Source {
       mangas.push(
         createMangaTile({
           id: chapterId,
-          image: "",
+          image: "https://via.placeholder.com/300x448.png",
           title: createIconText({ text: title ?? "" }),
         })
       );

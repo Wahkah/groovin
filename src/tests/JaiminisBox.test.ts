@@ -70,9 +70,8 @@ describe("JaiminisBox Tests", function () {
     expect(result, "No response from server").to.exist;
 
     expect(result.id, "No ID found for search query").to.be.not.empty;
-    expect(result.image, "No image found for search").to.be.empty;
+    expect(result.image, "No image found for search").to.be.not.empty;
     expect(result.title, "No title").to.be.not.null;
-    expect(result.subtitleText, "No subtitle text").to.be.not.null;
   });
 
   it("Testing invalid search", async () => {
