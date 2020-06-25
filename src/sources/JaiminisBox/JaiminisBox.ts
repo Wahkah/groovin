@@ -203,7 +203,7 @@ export class JaiminisBox extends Source {
       mangas.push(
         createMangaTile({
           id: chapterId,
-          image: "No image found for search",
+          image: "",
           title: createIconText({ text: title ?? "" }),
           subtitleText: createIconText({ text: author ?? "" }),
           primaryText: createIconText({ text: shortDesc ?? "" }),
