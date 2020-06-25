@@ -405,7 +405,7 @@ class JaiminisBox extends Source_1.Source {
             let shortDesc = undefined;
             mangas.push(createMangaTile({
                 id: chapterId,
-                image: "No image found for search",
+                image: "",
                 title: createIconText({ text: title !== null && title !== void 0 ? title : "" }),
                 subtitleText: createIconText({ text: author !== null && author !== void 0 ? author : "" }),
                 primaryText: createIconText({ text: shortDesc !== null && shortDesc !== void 0 ? shortDesc : "" }),
