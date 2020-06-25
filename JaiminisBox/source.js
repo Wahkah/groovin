@@ -254,7 +254,7 @@ class JaiminisBox extends Source_1.Source {
         super(cheerio);
     }
     get version() {
-        return "1.0.4";
+        return "1.0.5";
     }
     get name() {
         return "Jaiminis Box";
@@ -405,7 +405,7 @@ class JaiminisBox extends Source_1.Source {
             ).toLocaleDateString(); */
             mangas.push(createMangaTile({
                 id: chapterId,
-                image: "",
+                image: "https://via.placeholder.com/300x448.png",
                 title: createIconText({ text: title !== null && title !== void 0 ? title : "" }),
             }));
         });
