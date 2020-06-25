@@ -16,7 +16,7 @@ export class JaiminisBox extends Source {
   }
 
   get version(): string {
-    return "1.0.2";
+    return "1.0.3";
   }
 
   get name(): string {
@@ -194,20 +194,16 @@ export class JaiminisBox extends Source {
         chapterId = chapterIdClean.pop()!.toString();
       }
       let title = $("div.title a", manga).attr("title");
-      let lastUpdate = new Date(
+      /* let lastUpdate = new Date(
         Date.parse($("div.meta_r", manga).html() ?? "")
-      ).toLocaleDateString();
-      let author = undefined;
-      let shortDesc = undefined;
+      ).toLocaleDateString(); */
 
       mangas.push(
         createMangaTile({
           id: chapterId,
-          image: "",
+          // Placeholder, maybe change later
+          image: "https://via.placeholder.com/300x448",
           title: createIconText({ text: title ?? "" }),
-          subtitleText: createIconText({ text: author ?? "" }),
-          primaryText: createIconText({ text: shortDesc ?? "" }),
-          secondaryText: createIconText({ text: lastUpdate ?? "" }),
         })
       );
     });
