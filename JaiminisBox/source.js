@@ -254,7 +254,7 @@ class JaiminisBox extends Source_1.Source {
         super(cheerio);
     }
     get version() {
-        return "1.0.5";
+        return "1.0.6";
     }
     get name() {
         return "Jaiminis Box";
@@ -380,6 +380,9 @@ class JaiminisBox extends Source_1.Source {
         return createRequestObject({
             url: `${JB_DOMAIN}/reader/search`,
             method: "POST",
+            headers: {
+                "content-type": "application/x-www-form-urlencoded",
+            },
             data: searchData,
         });
     }
