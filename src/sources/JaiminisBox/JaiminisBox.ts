@@ -16,7 +16,7 @@ export class JaiminisBox extends Source {
   }
 
   get version(): string {
-    return "1.0.5";
+    return "1.0.6";
   }
 
   get name(): string {
@@ -171,6 +171,9 @@ export class JaiminisBox extends Source {
     return createRequestObject({
       url: `${JB_DOMAIN}/reader/search`,
       method: "POST",
+      headers: {
+        "content-type": "application/x-www-form-urlencoded",
+      },
       data: searchData,
     });
   }
