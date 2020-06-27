@@ -15,7 +15,7 @@ export class JaiminisBox extends Source {
   }
 
   get version(): string {
-    return "1.0.9";
+    return "1.0.10";
   }
 
   get name(): string {
@@ -74,7 +74,7 @@ export class JaiminisBox extends Source {
     let artist = raw[3].trim();
     let isAdult = false;
     let description = raw[5].trim();
-    let status = MangaStatus.UNKNOWN;
+    let status = MangaStatus.ONGOING;
     let titles = [];
     titles.push(title!);
 
@@ -117,12 +117,11 @@ export class JaiminisBox extends Source {
         return i != "" && i != null;
       });
       let chapterId = "";
-      let chapterNumber = 0;
       if (chapterIdClean && chapterIdClean.length > 1) {
         chapterId = chapterIdClean.pop()!.toString();
-        chapterNumber = Number(chapterIdClean.pop());
       }
-      let volume = chapterNumber;
+      let chapterNumber = parseInt(chapterId) ?? 0;
+      let volume = parseInt(chapterId) ?? 0;
 
       chapters.push(
         createChapter({

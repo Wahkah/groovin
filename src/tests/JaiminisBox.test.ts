@@ -12,11 +12,6 @@ describe("JaiminisBox Tests", function () {
   var chaiAsPromised = require("chai-as-promised");
   chai.use(chaiAsPromised);
 
-  /**
-   * The Manga ID which this unit test uses to base it's details off of.
-   * Try to choose a manga which is updated frequently, so that the historical checking test can
-   * return proper results, as it is limited to searching 30 days back due to extremely long processing times otherwise.
-   */
   var mangaId = "fire-force";
 
   it("Retrieve Manga Details", async () => {
@@ -28,8 +23,8 @@ describe("JaiminisBox Tests", function () {
     ).to.be.an("array");
     expect(details).to.not.have.lengthOf(0, "Empty response from server");
 
-    // Validate that the fields are filled
     let data = details[0];
+
     expect(data.id, "Missing ID").to.be.not.empty;
     expect(data.image, "Missing Image").to.be.not.empty;
     expect(data.status, "Missing Status").to.exist;
