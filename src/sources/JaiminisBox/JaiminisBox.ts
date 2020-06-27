@@ -15,7 +15,7 @@ export class JaiminisBox extends Source {
   }
 
   get version(): string {
-    return "1.0.10";
+    return "1.0.14";
   }
 
   get name(): string {
@@ -147,7 +147,9 @@ export class JaiminisBox extends Source {
   }
 
   getChapterDetails(data: any, metadata: any): ChapterDetails {
-    let pages = data.pages;
+    let pages = JSON.parse(data)["pages"];
+
+    console.log(pages);
 
     let pageList: string[] = [];
 
