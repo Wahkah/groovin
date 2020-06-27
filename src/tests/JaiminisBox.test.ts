@@ -60,7 +60,7 @@ describe("JaiminisBox Tests", function () {
 
   it("Testing search", async () => {
     let testSearch = createSearchRequest({
-      title: "fire",
+      title: "fire force",
     });
 
     let search = await wrapper.search(source, testSearch, 0);

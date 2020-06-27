@@ -15,7 +15,7 @@ export class JaiminisBox extends Source {
   }
 
   get version(): string {
-    return "1.0.7";
+    return "1.0.8";
   }
 
   get name(): string {
@@ -165,15 +165,15 @@ export class JaiminisBox extends Source {
   }
 
   searchRequest(query: SearchRequest, page: number): Request | null {
-    let searchData = `search=${query.title}`;
-
     return createRequestObject({
       url: `${JB_DOMAIN}/reader/search`,
       method: "POST",
       headers: {
         "content-type": "application/x-www-form-urlencoded",
       },
-      data: searchData,
+      data: {
+        search: query.title?.replace(" ", "%20"),
+      },
     });
   }
 
