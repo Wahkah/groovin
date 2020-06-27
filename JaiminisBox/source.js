@@ -67,7 +67,7 @@ class JaiminisBox extends Source_1.Source {
         super(cheerio);
     }
     get version() {
-        return "1.0.8";
+        return "1.0.9";
     }
     get name() {
         return "Jaiminis Box";
@@ -111,6 +111,7 @@ class JaiminisBox extends Source_1.Source {
         let title = $("h1.title").text().trim();
         let rating = "0";
         let author = raw[1].trim();
+        let artist = raw[3].trim();
         let isAdult = false;
         let description = raw[5].trim();
         let status = Manga_1.MangaStatus.UNKNOWN;
@@ -123,6 +124,7 @@ class JaiminisBox extends Source_1.Source {
             rating: Number(rating),
             status: status,
             author: author,
+            artist: artist,
             tags: [],
             desc: description,
             hentai: isAdult,
@@ -154,7 +156,7 @@ class JaiminisBox extends Source_1.Source {
                 chapterId = chapterIdClean.pop().toString();
                 chapterNumber = Number(chapterIdClean.pop());
             }
-            let volume = undefined;
+            let volume = chapterNumber;
             chapters.push(createChapter({
                 id: chapterId,
                 mangaId: metadata.mangaId,
