@@ -66,7 +66,7 @@ class JaiminisBox extends Source_1.Source {
         super(cheerio);
     }
     get version() {
-        return "1.0.10";
+        return "1.0.14";
     }
     get name() {
         return "Jaiminis Box";
@@ -175,7 +175,8 @@ class JaiminisBox extends Source_1.Source {
         });
     }
     getChapterDetails(data, metadata) {
-        let pages = data.pages;
+        let pages = JSON.parse(data)["pages"];
+        console.log(pages);
         let pageList = [];
         for (let page of pages) {
             pageList.push(page.url);
