@@ -52,7 +52,6 @@ var MangaStatus;
 (function (MangaStatus) {
     MangaStatus[MangaStatus["ONGOING"] = 1] = "ONGOING";
     MangaStatus[MangaStatus["COMPLETED"] = 0] = "COMPLETED";
-    MangaStatus[MangaStatus["UNKNOWN"] = 2] = "UNKNOWN";
 })(MangaStatus = exports.MangaStatus || (exports.MangaStatus = {}));
 
 },{}],3:[function(require,module,exports){
@@ -67,7 +66,7 @@ class JaiminisBox extends Source_1.Source {
         super(cheerio);
     }
     get version() {
-        return "1.0.9";
+        return "1.0.10";
     }
     get name() {
         return "Jaiminis Box";
@@ -114,7 +113,7 @@ class JaiminisBox extends Source_1.Source {
         let artist = raw[3].trim();
         let isAdult = false;
         let description = raw[5].trim();
-        let status = Manga_1.MangaStatus.UNKNOWN;
+        let status = Manga_1.MangaStatus.ONGOING;
         let titles = [];
         titles.push(title);
         mangas.push(createManga({
@@ -139,7 +138,7 @@ class JaiminisBox extends Source_1.Source {
         });
     }
     getChapters(data, metadata) {
-        var _a, _b;
+        var _a, _b, _c, _d;
         let $ = this.cheerio.load(data);
         let chapters = [];
         let rawChapters = $("div.element").toArray();
@@ -151,12 +150,11 @@ class JaiminisBox extends Source_1.Source {
                 return i != "" && i != null;
             });
             let chapterId = "";
-            let chapterNumber = 0;
             if (chapterIdClean && chapterIdClean.length > 1) {
                 chapterId = chapterIdClean.pop().toString();
-                chapterNumber = Number(chapterIdClean.pop());
             }
-            let volume = chapterNumber;
+            let chapterNumber = (_c = parseInt(chapterId)) !== null && _c !== void 0 ? _c : 0;
+            let volume = (_d = parseInt(chapterId)) !== null && _d !== void 0 ? _d : 0;
             chapters.push(createChapter({
                 id: chapterId,
                 mangaId: metadata.mangaId,
