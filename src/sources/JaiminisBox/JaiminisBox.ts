@@ -6,7 +6,6 @@ import { SearchRequest } from "../../models/SearchRequest/SearchRequest";
 import { Request } from "../../models/RequestObject/RequestObject";
 import { ChapterDetails } from "../../models/ChapterDetails/ChapterDetails";
 import { LanguageCode } from "../../models/Languages/Languages";
-import * as qs from "querystring";
 
 const JB_DOMAIN = "https://jaiminisbox.com";
 
@@ -16,7 +15,7 @@ export class JaiminisBox extends Source {
   }
 
   get version(): string {
-    return "1.0.6";
+    return "1.0.7";
   }
 
   get name(): string {
@@ -166,7 +165,7 @@ export class JaiminisBox extends Source {
   }
 
   searchRequest(query: SearchRequest, page: number): Request | null {
-    let searchData = qs.stringify({ search: `${query.title}` });
+    let searchData = `search=${query.title}`;
 
     return createRequestObject({
       url: `${JB_DOMAIN}/reader/search`,
