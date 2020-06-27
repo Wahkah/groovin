@@ -67,7 +67,7 @@ class JaiminisBox extends Source_1.Source {
         super(cheerio);
     }
     get version() {
-        return "1.0.7";
+        return "1.0.8";
     }
     get name() {
         return "Jaiminis Box";
