@@ -189,14 +189,16 @@ class JaiminisBox extends Source_1.Source {
         return chapterDetails;
     }
     searchRequest(query, page) {
-        let searchData = `search=${query.title}`;
+        var _a;
         return createRequestObject({
             url: `${JB_DOMAIN}/reader/search`,
             method: "POST",
             headers: {
                 "content-type": "application/x-www-form-urlencoded",
             },
-            data: searchData,
+            data: {
+                search: (_a = query.title) === null || _a === void 0 ? void 0 : _a.replace(" ", "%20"),
+            },
         });
     }
     search(data) {
