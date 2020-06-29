@@ -11,6 +11,7 @@ assignees: ''
 A clear and concise description why this source should be added.
 
 **Does the site have an [API](https://en.wikipedia.org/wiki/Web_API)?**
+If yes, provide the link to the API or the documentation.
 
 **What is the URL of the site?**
 What is the URL of the site?
