@@ -60,16 +60,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Source_1 = require("../Source");
 const Manga_1 = require("../../models/Manga/Manga");
 const Languages_1 = require("../../models/Languages/Languages");
-const JB_DOMAIN = "https://jaiminisbox.com";
-class JaiminisBox extends Source_1.Source {
+const MK_DOMAIN = "https://mangakisa.com";
+class Mangakisa extends Source_1.Source {
     constructor(cheerio) {
         super(cheerio);
     }
     get version() {
-        return "1.0.14";
+        return "1.0.0";
     }
     get name() {
-        return "Jaiminis Box";
+        return "Mangakisa";
     }
     get icon() {
         return "icon.png";
@@ -81,7 +81,7 @@ class JaiminisBox extends Source_1.Source {
         return "https://github.com/SungJinWoo-SL";
     }
     get description() {
-        return "Extension that pulls manga from JaminisBox.";
+        return "Extension that pulls manga from Mangakisa.";
     }
     get hentaiSource() {
         return false;
@@ -90,7 +90,7 @@ class JaiminisBox extends Source_1.Source {
         let requests = [];
         for (let id of ids) {
             requests.push(createRequestObject({
-                url: `${JB_DOMAIN}/reader/series/${id}`,
+                url: `${MK_DOMAIN}/${id}`,
                 method: "GET",
                 metadata: { id },
             }));
@@ -101,18 +101,16 @@ class JaiminisBox extends Source_1.Source {
         var _a;
         let mangas = [];
         let $ = this.cheerio.load(data);
-        let raw = $('div[class="info"]')
-            .text()
-            .trim()
-            .split(/(\w*Author\w*|\w*Artist\w*|\w*Synopsis\w*)+:/g);
-        raw.shift();
-        let cover = (_a = $(".thumbnail").find("img").attr("src")) !== null && _a !== void 0 ? _a : "";
-        let title = $("h1.title").text().trim();
+        let cover = `${MK_DOMAIN}/img/coversjpg/upscaled/${metadata.id}.jpg?13`;
+        let title = $("h1.infodes").text().trim();
         let rating = "0";
-        let author = raw[1].trim();
-        let artist = raw[3].trim();
+        let author = (_a = $("a.infoan")
+            .filter((i, el) => {
+            return el.attribs["href"].includes("authors");
+        })
+            .attr("href")) === null || _a === void 0 ? void 0 : _a.split("/").pop();
         let isAdult = false;
-        let description = raw[5].trim();
+        let description = $("div.infodesbox div.infodes2").first().text().trim();
         let status = Manga_1.MangaStatus.ONGOING;
         let titles = [];
         titles.push(title);
@@ -123,7 +121,7 @@ class JaiminisBox extends Source_1.Source {
             rating: Number(rating),
             status: status,
             author: author,
-            artist: artist,
+            artist: "UNKNOWN",
             tags: [],
             desc: description,
             hentai: isAdult,
@@ -132,29 +130,26 @@ class JaiminisBox extends Source_1.Source {
     }
     getChaptersRequest(mangaId) {
         return createRequestObject({
-            url: `${JB_DOMAIN}/reader/series/${mangaId}`,
+            url: `${MK_DOMAIN}/${mangaId}`,
             method: "GET",
             metadata: { mangaId },
         });
     }
     getChapters(data, metadata) {
-        var _a, _b, _c, _d;
+        var _a, _b, _c;
         let $ = this.cheerio.load(data);
         let chapters = [];
-        let rawChapters = $("div.element").toArray();
+        let rawChapters = $("div.infoepboxmain div.infoepbox a.infovan").toArray();
         for (let element of rawChapters) {
-            let title = $("div.title a", element).attr("title");
-            let date = new Date(Date.parse((_a = $("div.meta_r", element).html()) !== null && _a !== void 0 ? _a : ""));
-            let chapterIdRaw = (_b = $("div.title a", element).attr("href")) === null || _b === void 0 ? void 0 : _b.split("/");
-            let chapterIdClean = chapterIdRaw === null || chapterIdRaw === void 0 ? void 0 : chapterIdRaw.filter((i) => {
-                return i != "" && i != null;
-            });
-            let chapterId = "";
-            if (chapterIdClean && chapterIdClean.length > 1) {
-                chapterId = chapterIdClean.pop().toString();
-            }
-            let chapterNumber = (_c = parseInt(chapterId)) !== null && _c !== void 0 ? _c : 0;
-            let volume = (_d = parseInt(chapterId)) !== null && _d !== void 0 ? _d : 0;
+            let title = $("div.infoepmain div.infoep div.infoept div.infoept1 div.text-main-chapter", element)
+                .text()
+                .trim();
+            let unixTime = parseInt((_a = $("div.infoepmain div.infoep div.infoept div.infoept3 div time", element)
+                .attr("time")) === null || _a === void 0 ? void 0 : _a.toString());
+            let date = new Date(unixTime * 1000);
+            let chapterId = $(element).attr("href");
+            let chapterNumber = (_b = parseInt(title.split(" ")[1].toString())) !== null && _b !== void 0 ? _b : 0;
+            let volume = (_c = parseInt(title.split(" ")[1].toString())) !== null && _c !== void 0 ? _c : 0;
             chapters.push(createChapter({
                 id: chapterId,
                 mangaId: metadata.mangaId,
@@ -169,68 +164,59 @@ class JaiminisBox extends Source_1.Source {
     }
     getChapterDetailsRequest(mangaId, chapId) {
         return createRequestObject({
-            url: `${JB_DOMAIN}/reader/api/reader/chapter?comic_stub=${mangaId}&chapter=${chapId}`,
+            url: `${MK_DOMAIN}/${chapId}`,
             method: "GET",
             metadata: { mangaId, chapId },
         });
     }
     getChapterDetails(data, metadata) {
-        let pages = JSON.parse(JSON.stringify(data))["pages"];
+        let $ = this.cheerio.load(data);
+        let pages = $("img").toArray();
         let pageList = [];
         for (let page of pages) {
-            pageList.push(page.url);
+            let p = $(page).attr("src");
+            if (p.startsWith("//"))
+                p = p.replace("//", "");
+            p = `https://${p}`;
+            pageList.push(p);
         }
         let chapterDetails = createChapterDetails({
             id: metadata.chapId,
             mangaId: metadata.mangaId,
             pages: pageList,
-            longStrip: false,
+            longStrip: true,
         });
         return chapterDetails;
     }
-    searchRequest(query, page) {
+    searchRequest(query) {
         var _a;
         return createRequestObject({
-            url: `${JB_DOMAIN}/reader/search`,
-            method: "POST",
-            headers: {
-                "content-type": "application/x-www-form-urlencoded",
-            },
-            data: {
-                search: (_a = query.title) === null || _a === void 0 ? void 0 : _a.replace(" ", "%20"),
-            },
+            url: `${MK_DOMAIN}/search?q=${(_a = query.title) === null || _a === void 0 ? void 0 : _a.replace(" ", "+")}`,
+            method: "GET",
         });
     }
     search(data) {
         let $ = this.cheerio.load(data);
         let mangas = [];
-        if ($("div.group").toArray().length <= 0) {
+        if ($("div.iepbox a.an").toArray().length <= 0) {
             return mangas;
         }
-        $("div.group").each((index, manga) => {
-            var _a;
-            let chapterIdRaw = (_a = $("div.title a", manga).attr("href")) === null || _a === void 0 ? void 0 : _a.split("/");
-            let chapterIdClean = chapterIdRaw === null || chapterIdRaw === void 0 ? void 0 : chapterIdRaw.filter((i) => {
-                return i != "" && i != null;
-            });
-            let chapterId = "";
-            if (chapterIdClean && chapterIdClean.length > 1) {
-                chapterId = chapterIdClean.pop().toString();
-            }
-            let title = $("div.title a", manga).attr("title");
-            /* let lastUpdate = new Date(
-              Date.parse($("div.meta_r", manga).html() ?? "")
-            ).toLocaleDateString(); */
+        $("div.iepbox a.an").each((index, manga) => {
+            let id = manga.attribs["href"].toString().replace("/", "").trim();
+            let title = $("div.similarc div.similard div.centered div.similardd", manga)
+                .text()
+                .trim();
+            let image = MK_DOMAIN + $("div.similarc div.similarpic img", manga).attr("src");
             mangas.push(createMangaTile({
-                id: chapterId,
-                image: "https://via.placeholder.com/300x448.png",
+                image,
+                id,
                 title: createIconText({ text: title !== null && title !== void 0 ? title : "" }),
             }));
         });
         return mangas;
     }
 }
-exports.JaiminisBox = JaiminisBox;
+exports.Mangakisa = Mangakisa;
 
 },{"../../models/Languages/Languages":1,"../../models/Manga/Manga":2,"../Source":4}],4:[function(require,module,exports){
 "use strict";

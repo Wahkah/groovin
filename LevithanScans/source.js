@@ -60,16 +60,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Source_1 = require("../Source");
 const Manga_1 = require("../../models/Manga/Manga");
 const Languages_1 = require("../../models/Languages/Languages");
-const JB_DOMAIN = "https://jaiminisbox.com";
-class JaiminisBox extends Source_1.Source {
+const LV_DOMAIN = "https://leviatanscans.com";
+class LevithanScans extends Source_1.Source {
     constructor(cheerio) {
         super(cheerio);
     }
     get version() {
-        return "1.0.14";
+        return "0.0.1";
     }
     get name() {
-        return "Jaiminis Box";
+        return "Leviatan Scans";
     }
     get icon() {
         return "icon.png";
@@ -81,7 +81,7 @@ class JaiminisBox extends Source_1.Source {
         return "https://github.com/SungJinWoo-SL";
     }
     get description() {
-        return "Extension that pulls manga from JaminisBox.";
+        return "Extension that pulls manga from LevithanScans.";
     }
     get hentaiSource() {
         return false;
@@ -90,7 +90,7 @@ class JaiminisBox extends Source_1.Source {
         let requests = [];
         for (let id of ids) {
             requests.push(createRequestObject({
-                url: `${JB_DOMAIN}/reader/series/${id}`,
+                url: `${LV_DOMAIN}/comics/${id}`,
                 method: "GET",
                 metadata: { id },
             }));
@@ -101,18 +101,29 @@ class JaiminisBox extends Source_1.Source {
         var _a;
         let mangas = [];
         let $ = this.cheerio.load(data);
-        let raw = $('div[class="info"]')
+        let cover = LV_DOMAIN +
+            ((_a = $("a.media-content")
+                .attr("style")) === null || _a === void 0 ? void 0 : _a.match(/\(([^)]+)\)/))[1]
+                .toString();
+        let title = $("h5.text-highlight").first().text().trim();
+        let isAdultItem = $("div.item-feed")
+            .filter((i, el) => {
+            return $(el).text().trim() === "Mature (18+)";
+        })
+            .parents()[1];
+        let isAdultText = $("div.no-wrap", isAdultItem)
+            .children()
+            .first()
             .text()
-            .trim()
-            .split(/(\w*Author\w*|\w*Artist\w*|\w*Synopsis\w*)+:/g);
-        raw.shift();
-        let cover = (_a = $(".thumbnail").find("img").attr("src")) !== null && _a !== void 0 ? _a : "";
-        let title = $("h1.title").text().trim();
-        let rating = "0";
-        let author = raw[1].trim();
-        let artist = raw[3].trim();
-        let isAdult = false;
-        let description = raw[5].trim();
+            .trim();
+        let isAdult = isAdultText === "Yes" ? true : false;
+        let description = $("div.col-lg-9")
+            .clone()
+            .children()
+            .remove()
+            .end()
+            .text()
+            .trim();
         let status = Manga_1.MangaStatus.ONGOING;
         let titles = [];
         titles.push(title);
@@ -120,10 +131,10 @@ class JaiminisBox extends Source_1.Source {
             id: metadata.id,
             titles: titles,
             image: cover,
-            rating: Number(rating),
+            rating: Number("0"),
             status: status,
-            author: author,
-            artist: artist,
+            author: "Unknown",
+            artist: "Unknown",
             tags: [],
             desc: description,
             hentai: isAdult,
@@ -132,29 +143,24 @@ class JaiminisBox extends Source_1.Source {
     }
     getChaptersRequest(mangaId) {
         return createRequestObject({
-            url: `${JB_DOMAIN}/reader/series/${mangaId}`,
+            url: `${LV_DOMAIN}/comics/${mangaId}/`,
             method: "GET",
             metadata: { mangaId },
         });
     }
     getChapters(data, metadata) {
-        var _a, _b, _c, _d;
+        var _a;
         let $ = this.cheerio.load(data);
         let chapters = [];
-        let rawChapters = $("div.element").toArray();
+        let rawChapters = $("div.list-item.col-sm-3").toArray();
         for (let element of rawChapters) {
-            let title = $("div.title a", element).attr("title");
-            let date = new Date(Date.parse((_a = $("div.meta_r", element).html()) !== null && _a !== void 0 ? _a : ""));
-            let chapterIdRaw = (_b = $("div.title a", element).attr("href")) === null || _b === void 0 ? void 0 : _b.split("/");
-            let chapterIdClean = chapterIdRaw === null || chapterIdRaw === void 0 ? void 0 : chapterIdRaw.filter((i) => {
-                return i != "" && i != null;
-            });
-            let chapterId = "";
-            if (chapterIdClean && chapterIdClean.length > 1) {
-                chapterId = chapterIdClean.pop().toString();
-            }
-            let chapterNumber = (_c = parseInt(chapterId)) !== null && _c !== void 0 ? _c : 0;
-            let volume = (_d = parseInt(chapterId)) !== null && _d !== void 0 ? _d : 0;
+            let title = $("div.flex", element).children().first().text().trim();
+            let date = new Date("");
+            let chapterNumbers = (_a = $("div.flex a.item-author", element)
+                .attr("href")) === null || _a === void 0 ? void 0 : _a.replace(`${LV_DOMAIN}/comics/${metadata.mangaId}/`, "").split("/");
+            let chapterId = chapterNumbers[1];
+            let chapterNumber = parseInt(chapterNumbers[1]);
+            let volume = parseInt(chapterNumbers[0]);
             chapters.push(createChapter({
                 id: chapterId,
                 mangaId: metadata.mangaId,
@@ -169,13 +175,14 @@ class JaiminisBox extends Source_1.Source {
     }
     getChapterDetailsRequest(mangaId, chapId) {
         return createRequestObject({
-            url: `${JB_DOMAIN}/reader/api/reader/chapter?comic_stub=${mangaId}&chapter=${chapId}`,
+            url: `${LV_DOMAIN}/reader/api/reader/chapter?comic_stub=${mangaId}&chapter=${chapId}`,
             method: "GET",
             metadata: { mangaId, chapId },
         });
     }
     getChapterDetails(data, metadata) {
-        let pages = JSON.parse(JSON.stringify(data))["pages"];
+        let pages = JSON.parse(data)["pages"];
+        console.log(pages);
         let pageList = [];
         for (let page of pages) {
             pageList.push(page.url);
@@ -191,7 +198,7 @@ class JaiminisBox extends Source_1.Source {
     searchRequest(query, page) {
         var _a;
         return createRequestObject({
-            url: `${JB_DOMAIN}/reader/search`,
+            url: `${LV_DOMAIN}/reader/search`,
             method: "POST",
             headers: {
                 "content-type": "application/x-www-form-urlencoded",
@@ -230,7 +237,7 @@ class JaiminisBox extends Source_1.Source {
         return mangas;
     }
 }
-exports.JaiminisBox = JaiminisBox;
+exports.LevithanScans = LevithanScans;
 
 },{"../../models/Languages/Languages":1,"../../models/Manga/Manga":2,"../Source":4}],4:[function(require,module,exports){
 "use strict";
