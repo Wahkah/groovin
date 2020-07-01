@@ -15,7 +15,7 @@ export class JaiminisBox extends Source {
   }
 
   get version(): string {
-    return "1.0.14";
+    return "1.5.0";
   }
 
   get name(): string {
@@ -107,9 +107,13 @@ export class JaiminisBox extends Source {
   getChapters(data: any, metadata: any): Chapter[] {
     let $ = this.cheerio.load(data);
     let chapters: Chapter[] = [];
-    let rawChapters = $("div.element").toArray();
 
-    for (let element of rawChapters) {
+    for (let element of $("div.element").toArray()) {
+      let hasVolumes = $("div.title", element.parent)
+        .text()
+        .toLowerCase()
+        .includes("volume");
+
       let title = $("div.title a", element).attr("title");
       let date = new Date(Date.parse($("div.meta_r", element).html() ?? ""));
       let chapterIdRaw = $("div.title a", element).attr("href")?.split("/");
@@ -121,7 +125,11 @@ export class JaiminisBox extends Source {
         chapterId = chapterIdClean.pop()!.toString();
       }
       let chapterNumber = parseInt(chapterId) ?? 0;
-      let volume = parseInt(chapterId) ?? 0;
+      let volume = hasVolumes
+        ? parseInt(
+            $("div.title", element.parent).text().match(/\d+/g)![0].toString()
+          )
+        : parseInt(chapterId) ?? 0;
 
       chapters.push(
         createChapter({
@@ -135,6 +143,7 @@ export class JaiminisBox extends Source {
         })
       );
     }
+
     return chapters;
   }
 

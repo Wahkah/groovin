@@ -12,7 +12,7 @@ describe("JaiminisBox Tests", function () {
   var chaiAsPromised = require("chai-as-promised");
   chai.use(chaiAsPromised);
 
-  var mangaId = "fire-force";
+  var mangaId = "birdmen";
 
   it("Retrieve Manga Details", async () => {
     let details = await wrapper.getMangaDetails(source, [mangaId]);
