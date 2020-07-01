@@ -66,7 +66,7 @@ class JaiminisBox extends Source_1.Source {
         super(cheerio);
     }
     get version() {
-        return "1.0.14";
+        return "1.5.0";
     }
     get name() {
         return "Jaiminis Box";
@@ -141,8 +141,11 @@ class JaiminisBox extends Source_1.Source {
         var _a, _b, _c, _d;
         let $ = this.cheerio.load(data);
         let chapters = [];
-        let rawChapters = $("div.element").toArray();
-        for (let element of rawChapters) {
+        for (let element of $("div.element").toArray()) {
+            let hasVolumes = $("div.title", element.parent)
+                .text()
+                .toLowerCase()
+                .includes("volume");
             let title = $("div.title a", element).attr("title");
             let date = new Date(Date.parse((_a = $("div.meta_r", element).html()) !== null && _a !== void 0 ? _a : ""));
             let chapterIdRaw = (_b = $("div.title a", element).attr("href")) === null || _b === void 0 ? void 0 : _b.split("/");
@@ -154,7 +157,9 @@ class JaiminisBox extends Source_1.Source {
                 chapterId = chapterIdClean.pop().toString();
             }
             let chapterNumber = (_c = parseInt(chapterId)) !== null && _c !== void 0 ? _c : 0;
-            let volume = (_d = parseInt(chapterId)) !== null && _d !== void 0 ? _d : 0;
+            let volume = hasVolumes
+                ? parseInt($("div.title", element.parent).text().match(/\d+/g)[0].toString())
+                : (_d = parseInt(chapterId)) !== null && _d !== void 0 ? _d : 0;
             chapters.push(createChapter({
                 id: chapterId,
                 mangaId: metadata.mangaId,
